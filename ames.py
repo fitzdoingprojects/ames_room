@@ -6,6 +6,7 @@ import cameratransform as ct
 import collections
 from solid import *
 from solid.utils import *
+import math
 
 
 scale_factor = 1.0
@@ -19,15 +20,6 @@ def rectalinear_prism_to_vertices(w, l, h):
     y = w
     z = l
     return [
-        # [-x / 2, 0, -z / 2],
-        # [x / 2, 0, -z / 2],
-        # [x / 2, y, -z / 2],
-        # [-x / 2, y, -z / 2],
-        # [-x / 2, 0, z / 2],
-        # [x / 2, 0, z / 2],
-        # [x / 2, y, z / 2],
-        # [-x / 2, y, z / 2],
-        #
         [-x / 2, -y / 2, 0],
         [x / 2, -y / 2, 0],
         [x / 2, y / 2, 0],
@@ -53,9 +45,18 @@ def vertices_to_polyhedron(vertices):
     return polyhedron(vertices, faces)
 
 
+def lines_to_rotation(p1, p2):
+    return math.atan((p1[0] - p2[0]) / (p1[1] - p2[1]))
+
+
+def unfold_polyhedron(vertices, dxf):
+    bottom = polygon
+    dotted_line
+
+
 def ames_transform(point, w):
-    u = 15.0
-    l = 20.0
+    u = 15
+    l = 21
     y = 10
     projection_point = np.append(np.array(point), 1)
     print(projection_point)
@@ -76,9 +77,9 @@ def ames_transform(point, w):
     return result.tolist()[0:3]
 
 
-width = 10.0
-length = 7.0
-height = 5.0
+width = 16.0
+length = 10.0
+height = 8.0
 
 point_list = rectalinear_prism_to_vertices(width, length, height)
 transformed_points = []
@@ -86,14 +87,11 @@ for p in point_list:
     transformed_points.append(ames_transform(p, width))
 
 rectalinear_prism = vertices_to_polyhedron(point_list)
-
 rectalinear_prism = translate([width * 2, 0, 0])(rectalinear_prism)
-
 ames_room = vertices_to_polyhedron(transformed_points)
-# ames_room = translate([0, 0, 5])(ames_room)
 
 compare = cube()
-compare = ames_room + rectalinear_prism
+compare = ames_room  # + rectalinear_prism
 
 scad_render_to_file(compare, include_orig_code=True)
 
